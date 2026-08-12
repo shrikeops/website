@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- 10: geometric shrike head, angular facets -->
+  <!-- crown/back: grey facets -->
+  <polygon fill="#8e979e" points="116,84 100,58 68,54 44,76 40,104 60,98"/>
+  <polygon fill="#7d868d" points="40,104 44,76 30,120 52,156 64,150"/>
+  <polygon fill="#6b747b" points="64,150 52,156 116,156 100,128"/>
+  <!-- underside: light facet -->
+  <polygon fill="#f2f2ee" points="60,98 100,128 116,156 64,150"/>
+  <!-- mask: black facet -->
+  <polygon fill="#16181a" points="116,84 100,58 68,54 52,72 60,98 92,92"/>
+  <!-- beak: black hook -->
+  <polygon fill="#16181a" points="112,76 152,84 156,92 146,102 138,96 112,92"/>
+  <!-- eye: amber diamond -->
+  <polygon fill="#d99a2b" points="92,72 99,78 92,84 85,78"/>
+</svg>

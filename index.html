@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Shrike Ops - Counter-Drone Technology</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20200%20200%27%3E%3Cpolygon%20fill%3D%27%238e979e%27%20points%3D%27116%2C84%20100%2C58%2068%2C54%2044%2C76%2040%2C104%2060%2C98%27/%3E%3Cpolygon%20fill%3D%27%237d868d%27%20points%3D%2740%2C104%2044%2C76%2030%2C120%2052%2C156%2064%2C150%27/%3E%3Cpolygon%20fill%3D%27%236b747b%27%20points%3D%2764%2C150%2052%2C156%20116%2C156%20100%2C128%27/%3E%3Cpolygon%20fill%3D%27%23f2f2ee%27%20points%3D%2760%2C98%20100%2C128%20116%2C156%2064%2C150%27/%3E%3Cpolygon%20fill%3D%27%2333393f%27%20points%3D%27116%2C84%20100%2C58%2068%2C54%2052%2C72%2060%2C98%2092%2C92%27/%3E%3Cpolygon%20fill%3D%27%2333393f%27%20points%3D%27112%2C76%20152%2C84%20156%2C92%20146%2C102%20138%2C96%20112%2C92%27/%3E%3Cpolygon%20fill%3D%27%23d99a2b%27%20points%3D%2792%2C72%2099%2C78%2092%2C84%2085%2C78%27/%3E%3C/svg%3E" />
+    <meta
+      name="description"
+      content="Shrike Ops is a Canadian company building passive acoustic detection for counter-drone defence. Belleville, Ontario."
+    />
+    <style>
+      :root {
+        --bg: #0b0d0f;
+        --ink: #d7d9db;
+        --dim: #8a9098;
+        --rule: #262b31;
+        --accent: #d99a2b;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        font-size: 16px;
+      }
+      body {
+        background: var(--bg);
+        color: var(--ink);
+        font-family: "Helvetica Neue", Arial, sans-serif;
+        line-height: 1.6;
+        padding: 0 24px;
+      }
+      .page {
+        max-width: 1060px;
+        margin: 0 auto;
+      }
+
+      header {
+        display: grid;
+        grid-template-columns: 120px 1fr;
+        gap: 32px;
+        padding: 40px 0 32px;
+        border-bottom: 1px solid var(--rule);
+        align-items: start;
+      }
+      .logo {
+        display: block;
+        width: 96px;
+        height: 96px;
+        margin-bottom: 20px;
+      }
+      .wordmark {
+        font-family: ui-monospace, "SF Mono", Menlo, monospace;
+        font-size: 13px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--accent);
+      }
+      h1 {
+        font-family: Georgia, "Times New Roman", serif;
+        font-weight: normal;
+        font-size: clamp(30px, 4.5vw, 46px);
+        line-height: 1.15;
+        max-width: 16em;
+      }
+      .lede {
+        margin-top: 16px;
+        color: var(--dim);
+        font-size: 17px;
+        max-width: 34em;
+      }
+      .wave {
+        margin-top: 28px;
+        display: block;
+      }
+
+      section {
+        display: grid;
+        grid-template-columns: 120px 1fr;
+        gap: 32px;
+        padding: 40px 0;
+        border-bottom: 1px solid var(--rule);
+      }
+      .num {
+        font-family: ui-monospace, "SF Mono", Menlo, monospace;
+        font-size: 12px;
+        letter-spacing: 0.18em;
+        color: var(--accent);
+        padding-top: 6px;
+      }
+      h2 {
+        font-family: Georgia, "Times New Roman", serif;
+        font-weight: normal;
+        font-size: 24px;
+        margin-bottom: 16px;
+      }
+      section p {
+        max-width: 38em;
+        margin-bottom: 16px;
+      }
+      section p:last-child {
+        margin-bottom: 0;
+      }
+      .body-col {
+        max-width: 640px;
+      }
+      .roadmap {
+        display: block;
+        width: 100%;
+        height: auto;
+        margin: 8px 0 20px;
+      }
+
+      footer {
+        padding: 32px 0 48px;
+        display: grid;
+        grid-template-columns: 120px 1fr;
+        gap: 32px;
+        color: var(--dim);
+        font-size: 14px;
+      }
+      a {
+        color: var(--ink);
+        text-decoration-color: var(--accent);
+      }
+      .contact-line {
+        font-size: 16px;
+        color: var(--ink);
+      }
+
+      @media (max-width: 720px) {
+        header,
+        section,
+        footer {
+          grid-template-columns: 1fr;
+          gap: 8px;
+        }
+        .num {
+          padding-top: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <header>
+        <div>
+          <svg
+            class="logo"
+            viewBox="0 0 200 200"
+            role="img"
+            aria-label="Shrike Ops logo"
+          >
+            <polygon
+              fill="#8e979e"
+              points="116,84 100,58 68,54 44,76 40,104 60,98"
+            />
+            <polygon
+              fill="#7d868d"
+              points="40,104 44,76 30,120 52,156 64,150"
+            />
+            <polygon fill="#6b747b" points="64,150 52,156 116,156 100,128" />
+            <polygon fill="#f2f2ee" points="60,98 100,128 116,156 64,150" />
+            <polygon
+              fill="#33393f"
+              points="116,84 100,58 68,54 52,72 60,98 92,92"
+            />
+            <polygon
+              fill="#33393f"
+              points="112,76 152,84 156,92 146,102 138,96 112,92"
+            />
+            <polygon fill="#d99a2b" points="92,72 99,78 92,84 85,78" />
+          </svg>
+          <div class="wordmark">Shrike&nbsp;Ops</div>
+        </div>
+        <div>
+          <h1>Counter-drone technology</h1>
+          <p class="lede">
+            Shrike Ops builds acoustic sensors for directional drone detection.
+          </p>
+          <svg
+            class="wave"
+            width="320"
+            height="48"
+            viewBox="0 0 320 48"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M0 24 H88 L92 24 94 10 97 38 100 18 103 30 106 24 H150 L154 24 157 6 161 42 164 14 167 32 170 24 H226 L230 24 232 12 235 36 238 20 241 29 244 24 H320"
+              stroke="#d99a2b"
+              stroke-width="1"
+              opacity="0.85"
+            />
+          </svg>
+        </div>
+      </header>
+
+      <section>
+        <div class="num">01</div>
+        <div class="body-col">
+          <h2>The problem</h2>
+          <p>
+            Drones are cheap and dangerous. A $1,000 drone can cause millions of
+            dollars in damage.
+          </p>
+          <p>
+            Current acoustic detection methods struggle in noisy soundscapes
+            like airports and live events.
+          </p>
+        </div>
+      </section>
+
+      <section>
+        <div class="num">02</div>
+        <div class="body-col">
+          <h2>What we are building</h2>
+          <p>
+            Directional acoustic drone detection that works in noisy
+            soundscapes.
+          </p>
+          <p>
+            By combining hardware and software filtering, our microphones can
+            passively identify drone targets at greater distances than current
+            options.
+          </p>
+        </div>
+      </section>
+
+      <section>
+        <div class="num">03</div>
+        <div class="body-col">
+          <h2>Why acoustic</h2>
+          <p>
+            Detection methods like radar are expensive and easy targets. Many of
+            the drone breakthroughs in Ukraine have been achieved by first
+            taking out the radars and then exploiting the opening.
+          </p>
+          <p>
+            Acoustic sensors are passive. They don't advertise to the enemy
+            where you are and what you want to protect.
+          </p>
+        </div>
+      </section>
+
+      <section>
+        <div class="num">04</div>
+        <div class="body-col">
+          <h2>The company</h2>
+          <p>
+            Shrike Ops is 1000033630 Ontario Inc., a Canadian company based in
+            Belleville, Ontario. It was founded by a Canadian-Australian who
+            served in the Australian Army with NATO forces in Afghanistan. We
+            design for Canadian conditions (cold, wind, geese).
+          </p>
+        </div>
+      </section>
+
+      <section>
+        <div class="num">05</div>
+        <div class="body-col">
+          <h2>The roadmap</h2>
+          <svg
+            class="roadmap"
+            viewBox="0 0 640 200"
+            role="img"
+            aria-label="Roadmap: part one, detect — a shrike head hears a drone. Part two, intercept — the drone is targeted."
+          >
+            <!-- PART 1: DETECT — shrike head hears the drone -->
+            <text
+              x="0"
+              y="16"
+              font-family="ui-monospace, Menlo, monospace"
+              font-size="11"
+              letter-spacing="3"
+              fill="#d99a2b"
+            >
+              01 / DETECT
+            </text>
+            <g transform="translate(0 34) scale(0.82)">
+              <polygon
+                fill="#8e979e"
+                points="116,84 100,58 68,54 44,76 40,104 60,98"
+              />
+              <polygon
+                fill="#7d868d"
+                points="40,104 44,76 30,120 52,156 64,150"
+              />
+              <polygon fill="#6b747b" points="64,150 52,156 116,156 100,128" />
+              <polygon fill="#f2f2ee" points="60,98 100,128 116,156 64,150" />
+              <polygon
+                fill="#33393f"
+                points="116,84 100,58 68,54 52,72 60,98 92,92"
+              />
+              <polygon
+                fill="#33393f"
+                points="112,76 152,84 156,92 146,102 138,96 112,92"
+              />
+              <polygon fill="#d99a2b" points="92,72 99,78 92,84 85,78" />
+            </g>
+            <!-- small drone, top right of scene 1 -->
+            <g
+              transform="translate(216 56) scale(0.55)"
+              stroke="#d7d9db"
+              fill="none"
+              stroke-width="4"
+            >
+              <line x1="-26" y1="-18" x2="26" y2="18" />
+              <line x1="26" y1="-18" x2="-26" y2="18" />
+              <circle cx="-32" cy="-22" r="9" />
+              <circle cx="32" cy="-22" r="9" />
+              <circle cx="-32" cy="22" r="9" />
+              <circle cx="32" cy="22" r="9" />
+            </g>
+            <polygon fill="#d7d9db" points="216,50 224,56 216,62 208,56" />
+            <!-- sound arcs travelling from drone to shrike -->
+            <g
+              fill="none"
+              stroke="#d99a2b"
+              stroke-width="4"
+              stroke-linecap="round"
+            >
+              <path d="M188 52 A16 16 0 0 0 188 84" />
+              <path d="M170 40 A30 30 0 0 0 170 96" />
+              <path d="M152 28 A44 44 0 0 0 152 108" />
+            </g>
+
+            <!-- divider arrow -->
+            <line
+              x1="286"
+              y1="96"
+              x2="312"
+              y2="96"
+              stroke="#d99a2b"
+              stroke-width="3"
+              stroke-linecap="round"
+            />
+            <polyline
+              points="306,88 314,96 306,104"
+              fill="none"
+              stroke="#d99a2b"
+              stroke-width="3"
+              stroke-linecap="round"
+            />
+
+            <!-- PART 2: INTERCEPT — the drone, targeted -->
+            <text
+              x="352"
+              y="16"
+              font-family="ui-monospace, Menlo, monospace"
+              font-size="11"
+              letter-spacing="3"
+              fill="#d99a2b"
+            >
+              02 / INTERCEPT
+            </text>
+            <g transform="rotate(16 480 110)">
+              <g
+                transform="translate(480 110) scale(1.05)"
+                stroke="#d7d9db"
+                fill="none"
+                stroke-width="4"
+              >
+                <line x1="-30" y1="-22" x2="30" y2="22" />
+                <line x1="30" y1="-22" x2="-30" y2="22" />
+                <circle cx="-38" cy="-26" r="10" />
+                <circle cx="38" cy="-26" r="10" />
+                <circle cx="-38" cy="26" r="10" />
+                <circle cx="38" cy="26" r="10" />
+              </g>
+              <polygon
+                fill="#d7d9db"
+                points="480,100 490,110 480,120 470,110"
+              />
+            </g>
+            <!-- dead rotor -->
+            <g stroke="#c0341d" stroke-width="4" stroke-linecap="round">
+              <line x1="434" y1="72" x2="448" y2="86" />
+              <line x1="448" y1="72" x2="434" y2="86" />
+            </g>
+            <!-- target marks -->
+            <g
+              stroke="#d99a2b"
+              stroke-width="3"
+              fill="none"
+              stroke-linecap="round"
+            >
+              <line x1="480" y1="46" x2="480" y2="60" />
+              <line x1="480" y1="160" x2="480" y2="174" />
+              <line x1="416" y1="110" x2="430" y2="110" />
+              <line x1="530" y1="110" x2="544" y2="110" />
+            </g>
+            <polygon
+              fill="none"
+              stroke="#d99a2b"
+              stroke-width="2.5"
+              points="480,88 502,110 480,132 458,110"
+            />
+          </svg>
+          <p>The goal is air littoral dominance. It comes in two parts.</p>
+          <p>Part one is detection: find the drones. That is the work now.</p>
+          <p>Part two is interception: safely disable the drones. That work follows.</p>
+        </div>
+      </section>
+
+      <footer>
+        <div></div>
+        <div>
+          <p class="contact-line">
+            Procurement and evaluation enquiries:
+            <a href="mailto:info@shrikeops.ca">info@shrikeops.ca</a>
+          </p>
+          <p style="margin-top: 16px">
+            &copy; 2026 &mdash; 1000033630 Ontario Inc. (Shrike Ops),
+            Belleville, Ontario, Canada
+          </p>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>
