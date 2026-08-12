@@ -4,7 +4,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Shrike Ops - Counter-Drone Technology</title>
-    <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20200%20200%27%3E%3Cpolygon%20fill%3D%27%238e979e%27%20points%3D%27116%2C84%20100%2C58%2068%2C54%2044%2C76%2040%2C104%2060%2C98%27/%3E%3Cpolygon%20fill%3D%27%237d868d%27%20points%3D%2740%2C104%2044%2C76%2030%2C120%2052%2C156%2064%2C150%27/%3E%3Cpolygon%20fill%3D%27%236b747b%27%20points%3D%2764%2C150%2052%2C156%20116%2C156%20100%2C128%27/%3E%3Cpolygon%20fill%3D%27%23f2f2ee%27%20points%3D%2760%2C98%20100%2C128%20116%2C156%2064%2C150%27/%3E%3Cpolygon%20fill%3D%27%2333393f%27%20points%3D%27116%2C84%20100%2C58%2068%2C54%2052%2C72%2060%2C98%2092%2C92%27/%3E%3Cpolygon%20fill%3D%27%2333393f%27%20points%3D%27112%2C76%20152%2C84%20156%2C92%20146%2C102%20138%2C96%20112%2C92%27/%3E%3Cpolygon%20fill%3D%27%23d99a2b%27%20points%3D%2792%2C72%2099%2C78%2092%2C84%2085%2C78%27/%3E%3C/svg%3E" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20200%20200%27%3E%3Cpolygon%20fill%3D%27%238e979e%27%20points%3D%27116%2C84%20100%2C58%2068%2C54%2044%2C76%2040%2C104%2060%2C98%27/%3E%3Cpolygon%20fill%3D%27%237d868d%27%20points%3D%2740%2C104%2044%2C76%2030%2C120%2052%2C156%2064%2C150%27/%3E%3Cpolygon%20fill%3D%27%236b747b%27%20points%3D%2764%2C150%2052%2C156%20116%2C156%20100%2C128%27/%3E%3Cpolygon%20fill%3D%27%23f2f2ee%27%20points%3D%2760%2C98%20100%2C128%20116%2C156%2064%2C150%27/%3E%3Cpolygon%20fill%3D%27%2333393f%27%20points%3D%27116%2C84%20100%2C58%2068%2C54%2052%2C72%2060%2C98%2092%2C92%27/%3E%3Cpolygon%20fill%3D%27%2333393f%27%20points%3D%27112%2C76%20152%2C84%20156%2C92%20146%2C102%20138%2C96%20112%2C92%27/%3E%3Cpolygon%20fill%3D%27%23d99a2b%27%20points%3D%2792%2C72%2099%2C78%2092%2C84%2085%2C78%27/%3E%3C/svg%3E"
+    />
     <meta
       name="description"
       content="Shrike Ops is a Canadian company building passive acoustic detection for counter-drone defence. Belleville, Ontario."
@@ -83,12 +86,9 @@
         padding: 40px 0;
         border-bottom: 1px solid var(--rule);
       }
-      .num {
-        font-family: ui-monospace, "SF Mono", Menlo, monospace;
-        font-size: 12px;
-        letter-spacing: 0.18em;
-        color: var(--accent);
-        padding-top: 6px;
+      .body-col {
+        grid-column: 2;
+        max-width: 640px;
       }
       h2 {
         font-family: Georgia, "Times New Roman", serif;
@@ -102,9 +102,6 @@
       }
       section p:last-child {
         margin-bottom: 0;
-      }
-      .body-col {
-        max-width: 640px;
       }
       .roadmap {
         display: block;
@@ -137,8 +134,8 @@
           grid-template-columns: 1fr;
           gap: 8px;
         }
-        .num {
-          padding-top: 0;
+        .body-col {
+          grid-column: 1;
         }
       }
     </style>
@@ -199,7 +196,6 @@
       </header>
 
       <section>
-        <div class="num">01</div>
         <div class="body-col">
           <h2>The problem</h2>
           <p>
@@ -214,7 +210,6 @@
       </section>
 
       <section>
-        <div class="num">02</div>
         <div class="body-col">
           <h2>What we are building</h2>
           <p>
@@ -230,7 +225,6 @@
       </section>
 
       <section>
-        <div class="num">03</div>
         <div class="body-col">
           <h2>Why acoustic</h2>
           <p>
@@ -246,7 +240,6 @@
       </section>
 
       <section>
-        <div class="num">04</div>
         <div class="body-col">
           <h2>The company</h2>
           <p>
@@ -259,7 +252,6 @@
       </section>
 
       <section>
-        <div class="num">05</div>
         <div class="body-col">
           <h2>The roadmap</h2>
           <svg
@@ -375,11 +367,6 @@
                 points="480,100 490,110 480,120 470,110"
               />
             </g>
-            <!-- dead rotor -->
-            <g stroke="#c0341d" stroke-width="4" stroke-linecap="round">
-              <line x1="434" y1="72" x2="448" y2="86" />
-              <line x1="448" y1="72" x2="434" y2="86" />
-            </g>
             <!-- target marks -->
             <g
               stroke="#d99a2b"
@@ -401,7 +388,20 @@
           </svg>
           <p>The goal is air littoral dominance. It comes in two parts.</p>
           <p>Part one is detection: find the drones. That is the work now.</p>
-          <p>Part two is interception: safely disable the drones. That work follows.</p>
+          <p>
+            Part two is interception: safely disable the drones. That work
+            follows.
+          </p>
+        </div>
+      </section>
+
+      <section>
+        <div class="body-col">
+          <h2>What is a shrike</h2>
+          <p>
+            Shrikes are pretty little songbirds known for impaling their prey.
+            They are patient hunters.
+          </p>
         </div>
       </section>
 
