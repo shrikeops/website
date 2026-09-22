@@ -1,0 +1,30 @@
+/* stark — pure black and white with amber rationed to the logo eye,
+   the favicon, and the current nav marker. Maximum type contrast. */
+:root {
+  --bg: #000000;
+  --ink: #ececec;
+  --dim: #8f9296;
+  --rule: #1c1c1c;
+  --accent: #d99a2b;
+}
+
+.wordmark {
+  color: var(--ink);
+}
+
+h1 {
+  font-size: clamp(36px, 6vw, 64px);
+}
+
+a {
+  text-decoration-color: var(--ink);
+}
+
+nav a.current {
+  color: var(--ink);
+  border-bottom: 1px solid var(--accent);
+}
+
+.placeholder {
+  border-left-color: var(--ink);
+}
