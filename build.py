@@ -10,6 +10,7 @@ Every document opens with a front-matter block of `key: value` lines
 between --- fences, then a Markdown body. Raw HTML passes through
 Markdown, so art-directed markup (inline SVG) can sit in a page.
 style.css is inlined into every page; static/ is copied verbatim.
+Pages are minified on write (HTML, inline CSS, inline JS).
 """
 
 import shutil
@@ -17,6 +18,7 @@ import sys
 from pathlib import Path
 
 import markdown
+import minify_html
 
 ROOT = Path(__file__).resolve().parent
 CONTENT = ROOT / "content"
@@ -81,7 +83,10 @@ def out_path(slug):
 
 def write(path, html):
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(html, encoding="utf-8")
+    path.write_text(
+        minify_html.minify(html, minify_css=True, minify_js=True),
+        encoding="utf-8",
+    )
 
 
 def build():

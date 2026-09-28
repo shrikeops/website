@@ -3,7 +3,10 @@ name = "shrikeops-website"
 version = "0.1.0"
 description = "Build for shrikeops.ca"
 requires-python = ">=3.11"
-dependencies = ["markdown==3.10.3"]
+dependencies = [
+    "markdown==3.10.3",
+    "minify-html>=0.18.1",
+]
 
 [tool.uv]
 package = false
