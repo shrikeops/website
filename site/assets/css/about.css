@@ -1,0 +1,28 @@
+/* About page: the world map, the journey, and cartoon Greg */
+
+.scene .table-edge { fill: var(--earth-r, #9b7f5e); }
+.scene .ocean { fill: #dbe7ea; }
+.scene .graticule { fill: none; stroke: #c4d5da; stroke-width: 0.8; vector-effect: non-scaling-stroke; }
+.scene .land { fill: #cdd8b3; stroke: #aebd90; stroke-width: 0.8; vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+.scene .land-shadow { fill: #aebb90; }
+.scene .lake { fill: #dbe7ea; stroke: #aebd90; stroke-width: 0.6; vector-effect: non-scaling-stroke; }
+.scene .country { fill: var(--amber); opacity: 0; }
+.scene .journey-arc { fill: none; stroke: var(--amber); stroke-width: 2.6; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.scene .journey-dot { fill: var(--ink); }
+.scene .pin-body { fill: var(--ink); }
+.scene .pin-dot { fill: var(--amber); }
+.scene .pin-label { fill: var(--card); stroke: rgb(20 35 58 / 0.14); stroke-width: 1; }
+.scene .pin-text { font-family: var(--mono); font-size: 10px; font-weight: 500; fill: var(--ink); letter-spacing: 0.03em; }
+.scene .year-track { fill: #e3ddd0; }
+.scene .year-fill { fill: var(--amber); }
+.scene .year-text { font-size: 8.5px; fill: var(--ink-2); }
+.greg-stage { position: absolute; right: 3%; bottom: 3%; width: min(26%, 210px); aspect-ratio: 160 / 330; pointer-events: none; transition: opacity 0.3s ease; }
+.greg { display: block; width: 100%; height: 100%; }
+.greg .outfit { display: none; }
+.greg .outfit.is-on { display: inline; }
+
+@media (max-width: 880px) {
+  .greg-stage { width: 24%; right: 2%; bottom: 2%; }
+}
+.scene .region-land { fill: #cdd8b3; }
+.scene .region-lake { fill: #dbe7ea; }

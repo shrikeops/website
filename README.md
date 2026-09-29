@@ -1,24 +1,17 @@
 # shrikeops.ca
 
-The Shrike Ops website. Static site: Markdown content built by `build.py` into `dist/`. No JavaScript, no external assets; `style.css` is inlined into every page.
+This repository holds the website of Shrike Ops: [shrikeops.ca](https://shrikeops.ca).
 
-## Develop locally
+A Canadian company based in Belleville, Ontario. It builds tools that identify hybrid threats:
 
-```sh
-uv sync
-uv run python serve.py
-```
+- [Meerkat Watch](https://shrikeops.ca/digital/) finds the flaws an attacker would use in an organization's public systems, with the owner's permission, and reports them first.
+- [Microphone housings](https://shrikeops.ca/physical/) pick drones out of noise. Each one is shaped in simulation for one kind of drone in one kind of place, and changed when the threat changes.
 
-Serves on `0.0.0.0:8000` and rebuilds automatically when a source file changes. `uv run python build.py` builds once into `dist/`.
+The site is the place to read about both, and about the [company and its founder](https://shrikeops.ca/about/).
 
-`.envrc` sets `UV_CACHE_DIR` to the in-repo `.uv-cache/`; run `direnv allow` once if you use direnv, otherwise export it yourself.
+The repository is public so that GitHub Pages can host the site. We do not accept contributions, issues or pull requests. To get in touch, email info@shrikeops.ca.
 
-## Conventions
+## Credits
 
-- Pages: `content/<name>.md` becomes `/<name>/`. The home page is `content/index.md`.
-- Articles: `content/articles/<slug>.md` with a `date:` field. The index page generates from the set, and the Articles nav item appears when the first article exists.
-- Front matter: `---` fenced `key: value` lines. Keys: `title`, `description`, `nav` (nav label; omit to exclude from nav), `order` (nav position), `date` (articles).
-- Copy placeholders: a `[copy: ...]` paragraph followed by a `{: .placeholder}` attribute line; they render with an amber left border until replaced.
-- Raw HTML passes through Markdown (inline SVG). Keep HTML blocks flush left with blank lines around them.
-- `static/` is copied into `dist/` verbatim (CNAME).
-- Theme experiments: `themes/<name>.css` is an override sheet cascaded after `style.css`; preview with `?theme=<name>` (nav links keep the theme). Dev-only; a chosen theme merges into `style.css` and `themes/` goes away.
+- Fonts: Fraunces, Instrument Sans and IBM Plex Mono, under the SIL Open Font License. The licences sit beside the font files in `site/assets/fonts/`.
+- World map: [Natural Earth](https://www.naturalearthdata.com/) (public domain).
