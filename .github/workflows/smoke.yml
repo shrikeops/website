@@ -13,6 +13,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
+      - uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: |
+            ${{ runner.temp }}/playwright/node_modules
+            ~/.cache/ms-playwright
+          key: playwright-1.62.1-${{ runner.os }}-chromium
       - name: Install Playwright and Chromium
         run: |
           npm install --prefix "$RUNNER_TEMP/playwright" playwright@1.62.1
