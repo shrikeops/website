@@ -1,0 +1,73 @@
+/* Digital page: public-system panels, Meerkat Watch's tests, the replay */
+
+.legend-attack { color: var(--red); }
+.legend-watch { color: var(--amber-ink); }
+.legend-out { color: var(--neutral); }
+.scene .panel-frame { fill: var(--card); stroke: var(--ink); stroke-width: 0.8; }
+.scene .panel-rule { stroke: var(--ink); stroke-width: 0.6; }
+.scene .panel-lines { stroke: #c3cad3; stroke-width: 1.4; stroke-linecap: round; }
+.scene .panel-stem { stroke: var(--ink); stroke-width: 0.7; stroke-dasharray: 1.5 1.5; }
+.scene .panel-scan { fill: var(--red); fill-opacity: 0.4; }
+.scene .panel.is-attacked .panel-frame { stroke: var(--red); stroke-width: 1.4; }
+.scene .panel.is-watched .panel-frame { stroke: var(--amber); stroke-width: 1.8; }
+.scene .panel.is-watched .panel-stem { stroke: var(--amber-ink); }
+.scene .sys-frame { fill: var(--card); stroke: var(--ink); stroke-width: 1; }
+.scene .sys-rule { stroke: var(--ink); stroke-width: 0.7; }
+.scene .sys-dot { fill: #c9c2b4; }
+.scene .sys-text { stroke: #c3cad3; stroke-width: 2.2; stroke-linecap: round; }
+.scene .sys-plugin { fill: #e8e1d3; stroke: #b6ab96; stroke-width: 0.8; }
+.scene .sys-field { fill: #f3efe6; stroke: #b6ab96; stroke-width: 0.8; }
+.scene .sys-button { fill: var(--ink); }
+.scene .sys-folder { fill: #e9c77a; stroke: #b78f3a; stroke-width: 0.8; stroke-linejoin: round; }
+.scene .sys-terminal { fill: var(--ink); }
+.scene .sys-terminal-text { fill: none; stroke: #cfd8e3; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+.scene .sys-rack { fill: #dfe3e8; stroke: #9aa4af; stroke-width: 0.8; }
+.scene .sys-led { fill: #8fb07f; }
+.scene .sys-scan { fill: var(--amber); fill-opacity: 0.4; }
+.scene :is(.sys-label, .sys-note) text { font-family: var(--mono); font-size: 8px; font-weight: 500; fill: var(--ink); }
+.scene :is(.sys-label, .sys-note) rect { fill: var(--card); opacity: 0.94; }
+.scene .sys-note { opacity: 0; }
+.scene .sys-note text { fill: #6f7a8b; }
+.scene .sys-note.is-on { opacity: 1; }
+.scene .sys-stem { fill: none; stroke: var(--ink); stroke-width: 0.8; stroke-dasharray: 2 2; }
+.scene .sys-stem.is-out { stroke: #b3b8bf; }
+.scene .sys.is-scope .sys-frame { stroke: var(--amber); stroke-width: 2.4; }
+.scene .sys.is-flaw .sys-frame { stroke: var(--red); stroke-width: 2.4; }
+.scene .sys.is-out .sys-frame { fill: #eceae5; stroke: #b3b8bf; }
+.scene .sys.is-out .sys-art { opacity: 0.35; }
+.scene .scope-paper { fill: var(--card); stroke: var(--ink); stroke-width: 0.8; }
+.scene .scope-title { font-family: var(--mono); font-size: 4.6px; font-weight: 500; fill: var(--ink); letter-spacing: 0.1em; }
+.scene .scope-box { fill: none; stroke: var(--ink); stroke-width: 0.5; }
+.scene .scope-line { stroke: #c3cad3; stroke-width: 1.4; stroke-linecap: round; }
+.scene .scope-tick { fill: none; stroke: var(--amber-ink); stroke-width: 1; stroke-linecap: round; stroke-linejoin: round; }
+.scene .scope-cross { fill: none; stroke: var(--neutral); stroke-width: 0.9; stroke-linecap: round; }
+.scene .scope-sign { fill: none; stroke: var(--ink); stroke-width: 0.8; stroke-linecap: round; }
+.scene .noise-dot { fill: var(--neutral); }
+.scene .sweep-ring { fill: none; stroke: var(--red); stroke-width: 1.8; vector-effect: non-scaling-stroke; }
+.scene .cost-caption { font-family: var(--mono); font-size: 8.5px; fill: var(--ink-2); paint-order: stroke; stroke: #e6ecea; stroke-width: 3px; stroke-linejoin: round; }
+.scene :is(.cause-tag, .proof-tag, .result-tag, .noise-tag, .owner-tag) text { font-family: var(--mono); font-size: 10px; font-weight: 500; fill: #fff; letter-spacing: 0.04em; }
+.scene :is(.cause-tag, .result-tag) rect { fill: var(--ink); }
+.scene :is(.proof-tag, .result-tag--in) rect { fill: var(--red); }
+.scene .cause-tag--watch rect { fill: var(--amber); }
+.scene .cause-tag--watch text { fill: var(--ink); }
+.scene .noise-tag rect { fill: #8d97a6; }
+.scene .owner-tag rect { fill: var(--card); stroke: var(--ink); stroke-width: 1; }
+.scene .owner-tag text { fill: var(--ink); }
+.scene .owner-shadow { fill: #000; opacity: 0.15; }
+.scene .owner-body { fill: var(--ink); }
+.scene .owner-head { fill: #f3caa9; }
+.scene .report-paper { fill: var(--card); stroke: var(--ink); stroke-width: 1; }
+.scene .report-lines { stroke: var(--ink-3); stroke-width: 1.2; stroke-linecap: round; }
+.scene .replay-path { fill: none; stroke: var(--ink); stroke-width: 1.8; stroke-dasharray: 4 3; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.scene .replay-stop { stroke: var(--ink); stroke-width: 3; stroke-linecap: round; }
+.scene .step circle { fill: var(--card); stroke: var(--ink); stroke-width: 1.4; }
+.scene .step text { font-family: var(--mono); font-size: 7px; font-weight: 500; fill: var(--ink); }
+.plate .strike { fill: none; stroke: var(--red); stroke-width: 3; stroke-linecap: round; }
+.plate .ink-fill { fill: var(--ink); }
+.plate .terminal { fill: var(--ink); }
+.plate .prompt-line { fill: none; stroke: #cfd8e3; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.plate .ink .grid { stroke: var(--ink-3); stroke-width: 0.9; }
+.plate .net-link { stroke: var(--ink); stroke-width: 1.4; }
+.plate .net-link.is-down { stroke: #d6d0c5; }
+.plate .net-node { fill: var(--card); stroke: var(--ink); stroke-width: 1.8; }
+.plate .net-node.is-down { fill: #e7e2d8; stroke: #b9b2a6; }

@@ -1,0 +1,400 @@
+@font-face {
+  font-family: "Fraunces";
+  src: url("../fonts/fraunces-var.woff2") format("woff2");
+  font-weight: 100 900;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Instrument Sans";
+  src: url("../fonts/instrument-sans-var.woff2") format("woff2");
+  font-weight: 400 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("../fonts/ibm-plex-mono-400.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("../fonts/ibm-plex-mono-500.woff2") format("woff2");
+  font-weight: 500;
+  font-display: swap;
+}
+
+:root {
+  --paper: #f6f1e7;
+  --paper-deep: #ede5d6;
+  --card: #fffdf8;
+  --ink: #14233a;
+  --ink-2: #4b586c;
+  --ink-3: #6f7a8b;
+  --rule: #ddd3c1;
+  --amber: #d99a2b;
+  --amber-ink: #8f5c0e;
+  --power: #f2c14e;
+  --red: #c0341d;
+  --night: #0f1b2d;
+
+  /* What the stages' colours mean, beyond red for an attack or a threat and
+     amber for identification and a microphone's listening direction. */
+  --machinery: #5f7596;
+  --traffic: #7d8794;
+  --neutral: #9aa3ae;
+  --drone: #1b2638;
+
+  --display: "Fraunces", Georgia, "Times New Roman", serif;
+  --sans: "Instrument Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+
+  --gutter: clamp(16px, 4vw, 48px);
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 400 1.0625rem/1.6 var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; text-decoration-color: var(--amber); text-underline-offset: 3px; text-decoration-thickness: 1.5px; }
+a:hover { text-decoration-color: var(--ink); }
+
+/* Header */
+
+.site-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 32px;
+  flex-wrap: wrap;
+  padding: 20px var(--gutter);
+}
+.brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+.brand img { display: block; }
+.brand span, .footer-brand span {
+  font-family: var(--display);
+  font-weight: 620;
+  font-size: 1.4rem;
+  letter-spacing: -0.01em;
+  font-variation-settings: "SOFT" 60, "opsz" 36;
+}
+.site-nav ul { display: flex; gap: 8px 28px; list-style: none; margin: 0; padding: 0; flex-wrap: wrap; }
+.site-nav a { color: var(--ink-2); text-decoration: none; font-weight: 500; padding-bottom: 4px; }
+.site-nav a:hover { color: var(--ink); }
+.site-nav a[aria-current="page"] { color: var(--ink); box-shadow: inset 0 -2px var(--amber); }
+
+/* Story layout: copy column left, pinned stage right. */
+
+.story {
+  --activation: 0.5;
+  display: grid;
+  grid-template-columns: minmax(18rem, 37fr) 63fr;
+  padding-left: var(--gutter);
+}
+.story-beats { grid-column: 1; grid-row: 1; padding-right: clamp(16px, 3vw, 40px); }
+.story-stage {
+  grid-column: 2;
+  grid-row: 1;
+  position: sticky;
+  top: 0;
+  align-self: start;
+  height: 100vh;
+  height: 100svh;
+  padding: 12px 16px 16px 0;
+}
+.stage {
+  position: relative;
+  height: 100%;
+  border-radius: 28px;
+  overflow: hidden;
+  background: var(--sky, #e6ecea);
+  box-shadow: inset 0 0 0 1px rgb(20 35 58 / 0.06);
+}
+.stage > .scene { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+.beat { min-height: 100vh; min-height: 100svh; }
+.beat-card {
+  position: sticky;
+  top: 34vh;
+  max-width: 31rem;
+  padding-block: 12px;
+  transition: opacity 0.5s ease;
+}
+.beat:not(.is-active) .beat-card { opacity: 0.28; }
+.beat-card.is-tall { position: static; }
+.beat-card p { margin: 0 0 16px; }
+.beat-card > p:not(.eyebrow):not(.source) { font-size: clamp(1.125rem, 1.35vw, 1.3rem); line-height: 1.55; }
+
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.source { font-size: 0.875rem; color: var(--ink-2); }
+
+.beat--hero .beat-card { top: 18vh; padding-top: 6vh; }
+.beat--hero h1 {
+  font-family: var(--display);
+  font-weight: 560;
+  font-size: clamp(2.4rem, min(4.4vw, 6.6vh), 4.1rem);
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+  font-variation-settings: "SOFT" 50;
+  margin: 0 0 24px;
+  text-wrap: balance;
+}
+.beat--hero .lede { color: var(--ink-2); }
+.scroll-cue {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.scroll-cue::after {
+  content: "";
+  width: 12px;
+  height: 32px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 32' fill='none' stroke='%236f7a8b' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 1V30M1.5 25.5L6 30L10.5 25.5'/%3E%3C/svg%3E") no-repeat center / contain;
+  animation: cue 2.4s ease-in-out infinite;
+}
+@keyframes cue { 50% { transform: translateY(8px); } }
+
+/* Evidence beats: real events, visibly a different register from the scenario. */
+
+.beat--evidence .beat-card {
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 1px 0 rgb(20 35 58 / 0.04), 0 12px 32px -18px rgb(20 35 58 / 0.25);
+}
+.beat--evidence .eyebrow { color: var(--amber-ink); display: flex; align-items: center; gap: 8px; }
+.beat--evidence .eyebrow::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--amber);
+  flex: none;
+}
+
+/* Stage furniture */
+
+.fore { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.fore-wires path { fill: none; stroke: #3d4859; stroke-width: 1.6; }
+.fore-bird, .fore-wires { transform-box: fill-box; transform-origin: center; }
+.b-dark { fill: #14233a; }
+.b-back { fill: #606d7f; }
+.b-light { fill: var(--card); }
+.b-shade { fill: #e8dfcf; }
+.b-feet { fill: none; stroke: #14233a; stroke-width: 2.4; stroke-linecap: round; }
+
+.stage-dim { position: absolute; inset: 0; background: var(--sky, var(--paper)); opacity: 0; pointer-events: none; }
+
+.stage-chips {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  pointer-events: none;
+}
+.stage-chip {
+  margin: 0;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgb(255 253 248 / 0.9);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0;
+}
+
+.readout {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  min-width: 132px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: rgb(255 253 248 / 0.92);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+.readout p { margin: 0; }
+.readout-label { font-family: var(--mono); font-size: 0.625rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); }
+.readout-value { font-family: var(--display); font-weight: 600; font-size: 1.25rem; line-height: 1.2; font-variation-settings: "SOFT" 50; color: var(--ink); }
+
+.plate {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(420px, 82%);
+  margin: 0;
+  padding: 20px 20px 16px;
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: 18px;
+  box-shadow: 0 24px 60px -30px rgb(20 35 58 / 0.5);
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(-50%, -50%);
+}
+.plate svg { display: block; width: 100%; height: auto; }
+.plate-label {
+  margin: 0 0 8px;
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--amber-ink);
+}
+.plate .ink { fill: none; stroke: var(--ink); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.plate .paper-fill { fill: var(--card); }
+
+.plate-notes path { fill: none; stroke: var(--ink-3); stroke-width: 1; }
+.plate-notes text { font-family: var(--mono); font-size: 10.5px; fill: var(--ink-2); }
+
+.plate-figure { font-family: var(--display); font-size: 52px; font-weight: 600; fill: var(--red); }
+
+/* Scene: static styling. Colours come from palette.js custom properties. */
+
+.scene .ground { fill: var(--ground); }
+.scene .field1 { fill: var(--field1); }
+.scene .field2 { fill: var(--field2); }
+.scene .field3 { fill: var(--field3); }
+.scene .water { fill: var(--water); }
+.scene .water-edge { fill: var(--water-edge); }
+.scene .road { fill: var(--road); }
+.scene .road-line { fill: none; stroke: var(--road-line); stroke-width: 1; stroke-dasharray: 6 8; }
+.scene .runway { fill: var(--runway); }
+.scene .runway-line { stroke: var(--road-line); stroke-width: 1.2; stroke-dasharray: 10 8; }
+.scene .gravel { fill: var(--gravel); }
+.scene .tree-a { fill: var(--tree-a); }
+.scene .tree-b { fill: var(--tree-b); }
+.scene .tree-c { fill: var(--tree-c); }
+.scene .tree-d { fill: var(--tree-d); }
+.scene .trunk { stroke: var(--trunk); stroke-width: 1.2; }
+.scene .windows { fill: var(--win-off); }
+.scene .clock { fill: var(--wall-t); stroke: var(--roof-r); stroke-width: 0.6; }
+.scene .helipad { fill: var(--navy-t); }
+.scene .helipad-mark { fill: var(--white-t); }
+.scene .bay-doors { fill: var(--navy-r); }
+.scene .police-band { fill: var(--navy-l); }
+.scene .bushing { stroke: var(--metal-r); stroke-width: 1.3; stroke-linecap: round; }
+.scene .fence { fill: none; stroke: var(--fence); stroke-width: 0.8; }
+.scene .fence-mesh { fill: var(--fence); fill-opacity: 0.12; }
+.scene .pylon-steel { fill: none; stroke: var(--pylon); stroke-width: 0.9; stroke-linejoin: round; }
+.scene .tower-mouth { fill: var(--mouth); }
+.scene .wire { fill: none; stroke: var(--wire); stroke-width: 0.7; vector-effect: non-scaling-stroke; opacity: 0.8; }
+/* Ambient motion that accumulates over time (the marching flow dashes) is
+   written to --ambient-* properties, which the smoke test's frames ignore;
+   all other ambient motion is a pure function of the clock. */
+.scene .flow { fill: none; stroke: var(--power); stroke-width: 1.6; stroke-dasharray: 4 14; stroke-dashoffset: var(--ambient-march, 0); stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.scene .line-glow { fill: none; stroke: var(--red); stroke-width: 2.5; stroke-linecap: round; vector-effect: non-scaling-stroke; opacity: 0; }
+.scene .headlight { fill: #fff2c4; opacity: var(--lights, 0); }
+
+.scene .tether { fill: none; stroke: #b8733d; stroke-width: 1.2; vector-effect: non-scaling-stroke; }
+.scene .drone-arm { stroke: var(--drone); stroke-width: 1.4; }
+.scene .rotor { fill: rgb(27 38 56 / 0.28); stroke: var(--drone); stroke-width: 0.5; }
+.scene .drone-body { fill: var(--drone); }
+.scene .drone-light { fill: var(--red); }
+
+/* Footer */
+
+.site-footer {
+  margin-top: 64px;
+  padding: 40px var(--gutter) 48px;
+  border-top: 1px solid var(--rule);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 40px;
+  color: var(--ink-2);
+  font-size: 0.9375rem;
+}
+.site-footer p { margin: 0; }
+.footer-brand { display: flex; align-items: center; gap: 10px; color: var(--ink); }
+.footer-brand span { font-size: 1.15rem; }
+.legal { font-size: 0.8125rem; color: var(--ink-3); flex-basis: 100%; }
+
+/* Without JavaScript the story reads as plain copy. */
+
+.no-js .story { display: block; padding-right: var(--gutter); }
+.no-js .story-stage { display: none; }
+.no-js .beat { min-height: 0; padding-block: 16px; }
+.no-js .beat-card { position: static; }
+.no-js .beat:not(.is-active) .beat-card { opacity: 1; }
+
+/* Sprites from furniture.js and the region shared by story pages */
+
+.scene .price-tag rect, .scene .operator-tag rect { fill: var(--ink); }
+.scene .price-tag text, .scene .operator-tag text { font-family: var(--mono); font-size: 10px; font-weight: 500; fill: #fff; letter-spacing: 0.04em; }
+
+.scene .vuln-pin path { fill: var(--red); }
+.scene .vuln-pin-dot { fill: #fff; }
+.scene .fixed-check circle { fill: var(--amber); }
+.scene .fixed-check path { fill: none; stroke: var(--ink); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+.scene .airliner-windows { stroke: var(--navy-l); stroke-width: 1.2; stroke-dasharray: 1.2 1.2; }
+
+/* The closing line of a story: a contact address or a link out */
+
+.closing { font-family: var(--display); font-weight: 560; font-size: clamp(1.5rem, 2.4vw, 2.1rem) !important; line-height: 1.2 !important; font-variation-settings: "SOFT" 50; }
+
+/* Phones: the stage pins to the top and the copy scrolls up beneath it. */
+
+@media (max-width: 880px) {
+  .story { --activation: 0.8; display: block; padding: 0; }
+  .story-stage { position: sticky; top: 0; height: 56vh; height: 56svh; padding: 8px; z-index: 2; background: var(--paper); }
+  .stage { border-radius: 20px; }
+  .story-beats { padding: 0 var(--gutter); }
+  .beat { min-height: 70vh; min-height: 70svh; }
+  .beat-card { top: calc(56svh + 16px); }
+  .beat--hero .beat-card { top: calc(56svh + 8px); padding-top: 8px; }
+  .beat--hero h1 { font-size: clamp(1.9rem, 8vw, 2.4rem); margin-bottom: 12px; }
+  .beat--hero .lede { font-size: 1rem; }
+  .scroll-cue { display: none; }
+  .beat-card > p:not(.eyebrow):not(.source) { font-size: 1.0625rem; }
+  .beat--evidence .beat-card { padding: 16px; }
+
+  .stage-chips { top: 10px; left: 10px; gap: 6px; flex-direction: column; align-items: flex-start; }
+  .stage-chip { font-size: 0.5625rem; padding: 5px 9px; }
+  .readout { top: 10px; right: 10px; min-width: 0; padding: 7px 10px; }
+  .readout-value { font-size: 1rem; }
+
+  .plate { width: 88%; padding: 12px; }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-cue::after { animation: none; }
+  .beat-card { transition: none; }
+}
+
+/* Stage legend and chips shared by the Digital and Physical pages */
+
+.stage-chip--on { opacity: 1; }
+.stage-legend { position: absolute; left: 16px; bottom: 16px; margin: 0; padding: 8px 12px; list-style: none; display: flex; flex-wrap: wrap; gap: 6px 14px; border-radius: 12px; background: rgb(255 253 248 / 0.9); font-family: var(--mono); font-size: 0.6875rem; letter-spacing: 0.06em; opacity: 0; }
+.stage-legend li::before { content: ""; display: inline-block; width: 10px; height: 10px; margin-right: 6px; border-radius: 50%; border: 2px solid currentColor; vertical-align: -1px; }
+
+@media (max-width: 880px) {
+  .stage-legend { left: 8px; right: 8px; bottom: 8px; padding: 5px 8px; gap: 2px 10px; font-size: 0.5625rem; }
+}

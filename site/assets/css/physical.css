@@ -1,0 +1,84 @@
+/* Physical page: places, microphones, sound and the method cards */
+
+.legend-air { color: var(--machinery); }
+.legend-traffic { color: var(--traffic); }
+.legend-threat { color: var(--red); }
+.legend-listening { color: var(--amber-ink); }
+.scene .ring { fill: none; stroke-width: 1.4; vector-effect: non-scaling-stroke; opacity: 0; }
+.scene .ring-air { stroke: var(--machinery); stroke-width: 1.8; }
+.scene .ring-traffic { stroke: var(--traffic); }
+.scene .ring-threat { stroke: var(--red); stroke-width: 1.2; }
+.scene .lobe { fill: var(--amber); fill-opacity: 0.18; stroke: var(--amber); stroke-width: 1.4; vector-effect: non-scaling-stroke; opacity: 0; }
+.scene .mic-pole.is-chosen .m-navy.ft { fill: #f0c66b; }
+.scene .mic-pole.is-chosen .m-navy.fl { fill: var(--amber); }
+.scene .mic-pole.is-chosen .m-navy.fr { fill: #b98221; }
+.scene .callout-card { fill: var(--card); stroke: var(--ink); stroke-width: 1.2; }
+.scene .callout-arc { fill: none; stroke: var(--amber); stroke-width: 2.4; stroke-linecap: round; }
+.scene .print-head { stroke: var(--amber); stroke-width: 1.6; }
+.housing-shape .shape-body { fill: #dfe4ea; stroke: var(--ink); stroke-width: 1.1; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.housing-shape .shape-detail { fill: none; stroke: var(--ink); stroke-width: 0.8; vector-effect: non-scaling-stroke; }
+.housing-shape .shape-hole { fill: var(--card); stroke: var(--ink); stroke-width: 0.6; vector-effect: non-scaling-stroke; }
+.housing-shape .shape-mic { fill: var(--amber); }
+.scene .sound-path { fill: none; stroke: var(--traffic); stroke-width: 1.6; stroke-linejoin: round; vector-effect: non-scaling-stroke; opacity: 0; }
+.scene .path-direct { stroke-dasharray: 6 4; }
+.scene .path-echo { stroke-dasharray: 2 3; stroke: var(--machinery); }
+.scene .approach { fill: none; stroke: var(--red); stroke-width: 1.8; stroke-dasharray: 6 5; vector-effect: non-scaling-stroke; }
+.scene .candidate-path { fill: none; stroke: var(--neutral); stroke-width: 1; vector-effect: non-scaling-stroke; opacity: 0; }
+.scene :is(.place-tag, .surface-tag) rect { fill: var(--ink); }
+.scene .surface-tag rect { fill: var(--card); stroke: var(--ink); stroke-width: 1; }
+.scene :is(.place-tag, .surface-tag) text { font-family: var(--mono); font-size: 10px; font-weight: 500; fill: #fff; letter-spacing: 0.04em; }
+.scene .surface-tag text { fill: var(--ink); }
+.scene .shahed-body { fill: #4a4f57; stroke: var(--drone); stroke-width: 0.8; }
+.scene .shahed-fin { stroke: var(--drone); stroke-width: 1.4; }
+.scene .shahed-prop { fill: rgb(27 38 56 / 0.3); stroke: var(--drone); stroke-width: 0.5; }
+.scene .shahed-jet { fill: var(--drone); }
+.scene .shahed[data-variant="jet"] .shahed-prop, .scene .shahed:not([data-variant="jet"]) .shahed-jet { display: none; }
+.scene .radar-dish { fill: #dfe4ea; stroke: var(--ink); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.scene .radar-pulse { fill: none; stroke: var(--machinery); stroke-width: 1.4; vector-effect: non-scaling-stroke; opacity: 0; }
+.scene .locator-mark { fill: none; stroke: var(--red); stroke-width: 2; }
+.scene .locator-ring { fill: none; stroke: var(--red); stroke-width: 1.2; stroke-dasharray: 4 4; }
+.soundprint {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: min(300px, 44%);
+  margin: 0;
+  padding: 10px 12px 8px;
+  border-radius: 14px;
+  background: var(--card);
+  border: 1px solid var(--rule);
+  opacity: 0;
+  visibility: hidden;
+}
+.soundprint figcaption { margin-bottom: 4px; font-family: var(--mono); font-size: 0.625rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--amber-ink); }
+.soundprint-plot { display: block; width: 100%; height: auto; }
+.soundprint .axis { stroke: var(--ink-3); stroke-width: 1; }
+.soundprint .legend { font-family: var(--mono); font-size: 8px; fill: var(--ink-2); }
+.soundprint .print-noise rect { fill: var(--machinery); }
+.soundprint .print-noise path { stroke: var(--machinery); stroke-width: 2; }
+.soundprint .print-threat path { stroke: var(--red); stroke-width: 1.4; }
+.soundprint .print-jet rect { fill: var(--red); }
+.plate .board path { stroke: var(--ink-3); stroke-width: 4; stroke-linecap: round; }
+.plate .cancelled path { stroke: var(--red); stroke-width: 4; stroke-linecap: round; }
+.plate .comb path { stroke: var(--red); stroke-width: 2; }
+.plate .smear { fill: var(--red); fill-opacity: 0.35; }
+.plate .wavefront path { fill: none; stroke: var(--traffic); stroke-width: 2.4; stroke-linecap: round; }
+.plate .wavefront--drone path { stroke: var(--red); }
+.plate .meter-track { fill: #ece6da; }
+.plate .meter-bar { fill: var(--neutral); }
+.plate .meter-bar--drone { fill: var(--red); }
+.plate .score-track { fill: #ece6da; }
+.plate .score-bar { fill: var(--neutral); }
+.plate .score-bar--best { fill: var(--amber); }
+.plate .best { fill: none; stroke: var(--amber); stroke-width: 2.4; opacity: 0; transition: opacity 0.2s; }
+.plate .best.is-on { opacity: 1; }
+.plate .print-head-line { stroke: var(--amber); stroke-width: 2; }
+.plate .print-nozzle { fill: var(--ink); }
+.plate .polar circle, .plate .polar path { fill: none; stroke: #d6d0c5; stroke-width: 1; }
+.plate .measured { fill: var(--amber); fill-opacity: 0.18; stroke: var(--amber-ink); stroke-width: 2; stroke-dasharray: 1; stroke-dashoffset: 1; }
+.plate .loop-back { fill: none; stroke: var(--ink-3); stroke-width: 1.4; opacity: 0; }
+
+@media (max-width: 880px) {
+  .soundprint { top: 38px; right: 8px; width: 40%; padding: 5px 7px 4px; border-radius: 10px; }
+  .soundprint figcaption { font-size: 0.5rem; margin-bottom: 2px; }
+}
