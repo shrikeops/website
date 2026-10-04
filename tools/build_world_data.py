@@ -1,11 +1,11 @@
 """Build site/assets/js/data/world.js from Natural Earth 1:110m data.
 
 Downloads land and country outlines (world-atlas package, TopoJSON) and lakes
-(Natural Earth GeoJSON), cuts the world at 30°W so the About page's map can
-centre on the Pacific without splitting land, drops Antarctica, simplifies,
-and writes a small JS module of [lon, lat, lon, lat, ...] rings. The 1:10m
-land and lakes are clipped to the Lake Ontario region for the Belleville
-close-up, where 1:110m is too coarse.
+(Natural Earth GeoJSON), keeps rings that cross the antimeridian whole, cuts
+the world at 30°W so the About page's map can centre on the Pacific without
+splitting land, drops Antarctica, simplifies, and writes a small JS module of
+[lon, lat, lon, lat, ...] rings. The 1:10m land and lakes are clipped to the
+Lake Ontario region for the Belleville close-up, where 1:110m is too coarse.
 
 Run:  uv run --with shapely python tools/build_world_data.py
 """
@@ -37,6 +37,17 @@ def fetch(url):
         return json.load(response)
 
 
+def unwrap(points):
+    """Keep a ring's longitudes continuous, so a ring that crosses the
+    antimeridian runs on past 180° instead of jumping back across the whole
+    world. A ring around the South Pole cannot close that way and keeps its
+    outline; the map leaves Antarctica out."""
+    out = [points[0]]
+    for lon, lat in points[1:]:
+        out.append((lon + 360 * round((out[-1][0] - lon) / 360), lat))
+    return out if out[-1][0] == out[0][0] else points
+
+
 def topo_decoder(topo):
     sx, sy = topo['transform']['scale']
     tx, ty = topo['transform']['translate']
@@ -55,7 +66,7 @@ def topo_decoder(topo):
         for i in ids:
             arc = arcs[i] if i >= 0 else arcs[~i][::-1]
             points.extend(arc if not points else arc[1:])
-        return points
+        return unwrap(points)
 
     def polygons(geometry):
         if geometry['type'] == 'Polygon':
@@ -69,10 +80,10 @@ def topo_decoder(topo):
 
 def rings(polygons, min_area=0.3):
     merged = unary_union([p.buffer(0) for p in polygons])
-    east = merged.intersection(box(CUT, -90, 180, 90))
-    west = affinity.translate(merged.intersection(box(-180, -90, CUT, 90)), xoff=360)
+    frame = box(CUT, -90, CUT + 360, 90)
     out = []
-    for part in (east, west):
+    for shift in (0, 360):
+        part = affinity.translate(merged, xoff=shift).intersection(frame)
         for p in getattr(part, 'geoms', [part]):
             if p.is_empty or p.geom_type != 'Polygon' or p.centroid.y < -60:
                 continue
