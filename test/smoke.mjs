@@ -1,6 +1,6 @@
-// Browser smoke test for the story pages. Spawns its own static server on
-// site/ and finds the pages from the site's navigation, so a new page is
-// covered as soon as the nav links to it.
+// Browser smoke test for the story pages. Serves site/ itself on a free port
+// and finds the pages from the site's navigation, so a new page is covered as
+// soon as the nav links to it.
 //
 // Each check names the defect it exists to catch:
 //   - a track or beat mismatch that throws while scrolling (console/page errors)
@@ -14,13 +14,15 @@
 //   - horizontal overflow at phone width
 //
 // Run:  PLAYWRIGHT_DIR=<directory holding node_modules/playwright> node test/smoke.mjs
-//       BASE_URL=<url> ... runs against a live server instead of spawning one.
+//       BASE_URL=<url> ... runs against that server instead.
 // Without PLAYWRIGHT_DIR, playwright is resolved from this repository.
 
 import { createRequire } from 'node:module';
-import { spawn } from 'node:child_process';
+import { createServer } from 'node:http';
+import { once } from 'node:events';
+import { readFile, stat } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
-import { dirname, join } from 'node:path';
+import { dirname, extname, join, resolve, sep } from 'node:path';
 
 const require = createRequire(process.env.PLAYWRIGHT_DIR ? join(process.env.PLAYWRIGHT_DIR, '/') : import.meta.url);
 const { chromium } = require('playwright');
@@ -32,17 +34,42 @@ const PROBE = 0.6;
 const SETTLE_MS = 900;
 
 const here = dirname(fileURLToPath(import.meta.url));
-let BASE = process.env.BASE_URL;
-let server = null;
-if (!BASE) {
-  const PORT = 8190;
-  BASE = `http://127.0.0.1:${PORT}`;
-  server = spawn('python3', ['-m', 'http.server', String(PORT), '--bind', '127.0.0.1', '--directory', join(here, '..', 'site')], { stdio: 'ignore' });
-  process.on('exit', () => server?.kill());
-  for (let i = 0; i < 50; i++) {
-    try { await fetch(BASE); break; } catch { await new Promise((r) => setTimeout(r, 100)); }
-  }
+
+// Module scripts are refused under any other type than text/javascript.
+const TYPES = {
+  '.html': 'text/html; charset=utf-8',
+  '.css': 'text/css; charset=utf-8',
+  '.js': 'text/javascript; charset=utf-8',
+  '.svg': 'image/svg+xml',
+  '.woff2': 'font/woff2',
+  '.txt': 'text/plain; charset=utf-8',
+};
+
+// Serves root from this process on a port the OS picks, so no stale or
+// unrelated server can answer in its place, and nothing outlives the test.
+async function serveSite(root) {
+  root = resolve(root);
+  const server = createServer(async (req, res) => {
+    const send = (status, headers = {}, body) => res.writeHead(status, headers).end(req.method === 'HEAD' ? undefined : body);
+    let pathname, file;
+    try { pathname = new URL(req.url, 'http://x').pathname; file = join(root, decodeURIComponent(pathname)); } catch { return send(400); }
+    if (file !== root && !file.startsWith(root + sep)) return send(404);
+    try {
+      if ((await stat(file)).isDirectory()) {
+        if (!pathname.endsWith('/')) return send(301, { Location: `${pathname}/` });
+        file = join(file, 'index.html');
+      }
+      const body = await readFile(file);
+      send(200, { 'Content-Type': TYPES[extname(file)] ?? 'application/octet-stream', 'Content-Length': body.length }, body);
+    } catch { send(404); }
+  });
+  server.listen(0, '127.0.0.1');
+  await once(server, 'listening');
+  return `http://127.0.0.1:${server.address().port}`;
 }
+
+let BASE = process.env.BASE_URL;
+if (!BASE) BASE = await serveSite(join(here, '..', 'site'));
 
 const failures = [];
 const check = (ok, message) => { if (!ok) failures.push(message); };
