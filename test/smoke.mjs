@@ -85,11 +85,38 @@ async function openPage(path, options = {}) {
   return { page, problems };
 }
 
+// Opens path, runs fn on it and closes it. What the page logged, and anything
+// thrown while opening it or inside fn, is recorded under label, so one broken
+// page cannot end the run before the summary. Resolves to fn's result, or
+// undefined if something threw.
+async function withPage(label, path, options, fn) {
+  let opened;
+  try {
+    opened = await openPage(path, options);
+    return await fn(opened);
+  } catch (e) {
+    failures.push(`${label}: threw ${(e?.message ?? String(e)).split('\n')[0]}`);
+  } finally {
+    for (const p of opened?.problems ?? []) failures.push(`${label}: ${p}`);
+    await opened?.page.close().catch(() => {});
+  }
+}
+
+// The same 404 is often seen by several sections; it is listed once.
+async function finish() {
+  await browser.close();
+  const unique = [...new Set(failures)];
+  if (unique.length) {
+    console.error(`FAIL (${unique.length})\n` + unique.map((f) => `  - ${f}`).join('\n'));
+    process.exit(1);
+  }
+  console.log(`PASS: story smoke test (${PAGES.length} pages)`);
+  process.exit(0);
+}
+
 async function storyPages() {
-  const { page } = await openPage('');
-  const paths = await page.evaluate(() => [...document.querySelectorAll('.site-nav a[href]')].map((a) => new URL(a.href).pathname.replace(/^\//, '')));
-  await page.close();
-  return [...new Set(paths)];
+  const paths = await withPage('/ (discovery)', '', {}, ({ page }) => page.evaluate(() => [...document.querySelectorAll('.site-nav a[href]')].map((a) => new URL(a.href).pathname.replace(/^\//, ''))));
+  return [...new Set(paths ?? [])];
 }
 
 async function scrollToBeat(page, id, fraction) {
@@ -142,19 +169,18 @@ function firstDifferences(a, b, limit = 3) {
 }
 
 async function checkReversible(path) {
-  const { page, problems } = await openPage(path);
-  const beats = await page.evaluate(() => [...document.querySelectorAll('section[data-beat]')].map((b) => b.dataset.beat));
-  const down = [];
-  for (const id of beats) { await scrollToBeat(page, id, PROBE); down.push(await page.evaluate(frame, FROZEN_NOW)); }
-  await scrollToBeat(page, beats[beats.length - 1], 0.95);
-  const up = [];
-  for (const id of [...beats].reverse()) { await scrollToBeat(page, id, PROBE); up.unshift(await page.evaluate(frame, FROZEN_NOW)); }
-  beats.forEach((id, i) => {
-    const same = down[i].length === up[i].length && down[i].every((line, k) => line === up[i][k]);
-    check(same, `/${path} beat ${id}: the frame differs between scrolling down and scrolling back up\n${firstDifferences(down[i], up[i])}`);
+  await withPage(`/${path}`, path, {}, async ({ page }) => {
+    const beats = await page.evaluate(() => [...document.querySelectorAll('section[data-beat]')].map((b) => b.dataset.beat));
+    const down = [];
+    for (const id of beats) { await scrollToBeat(page, id, PROBE); down.push(await page.evaluate(frame, FROZEN_NOW)); }
+    await scrollToBeat(page, beats[beats.length - 1], 0.95);
+    const up = [];
+    for (const id of [...beats].reverse()) { await scrollToBeat(page, id, PROBE); up.unshift(await page.evaluate(frame, FROZEN_NOW)); }
+    beats.forEach((id, i) => {
+      const same = down[i].length === up[i].length && down[i].every((line, k) => line === up[i][k]);
+      check(same, `/${path} beat ${id}: the frame differs between scrolling down and scrolling back up\n${firstDifferences(down[i], up[i])}`);
+    });
   });
-  for (const p of problems) failures.push(`/${path}: ${p}`);
-  await page.close();
 }
 
 const PAGES = await storyPages();
@@ -162,14 +188,13 @@ const PAGES = await storyPages();
 // 1. Scroll every page down and back up at three widths.
 for (const path of PAGES) {
   for (const [width, height] of [[1440, 900], [1024, 768], [390, 844]]) {
-    const { page, problems } = await openPage(path, { viewport: { width, height } });
-    const total = await page.evaluate(() => document.documentElement.scrollHeight);
-    for (let y = 0; y < total; y += 250) { await page.evaluate((v) => scrollTo(0, v), y); await page.waitForTimeout(30); }
-    for (let y = total; y > 0; y -= 500) { await page.evaluate((v) => scrollTo(0, v), y); await page.waitForTimeout(30); }
-    const overflow = await page.evaluate(() => document.documentElement.scrollWidth > innerWidth);
-    check(!overflow, `/${path} at ${width}px: page scrolls horizontally`);
-    for (const p of problems) failures.push(`/${path} at ${width}px: ${p}`);
-    await page.close();
+    await withPage(`/${path} at ${width}px`, path, { viewport: { width, height } }, async ({ page }) => {
+      const total = await page.evaluate(() => document.documentElement.scrollHeight);
+      for (let y = 0; y < total; y += 250) { await page.evaluate((v) => scrollTo(0, v), y); await page.waitForTimeout(30); }
+      for (let y = total; y > 0; y -= 500) { await page.evaluate((v) => scrollTo(0, v), y); await page.waitForTimeout(30); }
+      const overflow = await page.evaluate(() => document.documentElement.scrollWidth > innerWidth);
+      check(!overflow, `/${path} at ${width}px: page scrolls horizontally`);
+    });
   }
 }
 
@@ -178,32 +203,27 @@ for (const path of PAGES) {
 for (const path of PAGES) await checkReversible(path);
 
 // 3. Reduced motion: arriving at the short-circuit beat shows its end state.
-{
-  const { page } = await openPage('', { reducedMotion: 'reduce' });
+await withPage('reduced motion', '', { reducedMotion: 'reduce' }, async ({ page }) => {
   await scrollToBeat(page, 'short-circuit', 0.05);
   const glow = await page.evaluate(() => Math.max(...[...document.querySelectorAll('.sub-glow')].slice(0, 2).map((g) => +g.style.opacity || 0)));
   check(glow > 0.2, 'reduced motion: the start of the short-circuit beat should already show the struck substations');
-  await page.close();
-}
+});
 
 for (const path of PAGES) {
   // 4. Without JavaScript the stage is hidden and every beat's copy is visible.
-  {
-    const { page } = await openPage(path, { javaScriptEnabled: false });
+  await withPage(`/${path} no-JS`, path, { javaScriptEnabled: false }, async ({ page }) => {
     const state = await page.evaluate(() => ({
       stage: getComputedStyle(document.querySelector('.story-stage')).display,
       hidden: [...document.querySelectorAll('.beat-card')].filter((c) => getComputedStyle(c).opacity !== '1' || c.getBoundingClientRect().height === 0).length,
     }));
     check(state.stage === 'none', `/${path} no-JS: the stage should be hidden`);
     check(state.hidden === 0, `/${path} no-JS: ${state.hidden} beat cards are not visible`);
-    await page.close();
-  }
+  });
 
   // 5. Beats, sources and cards: beat ids are unique, every evidence beat
   //    cites a source, every evidence card belongs to a beat, and internal
   //    links resolve.
-  {
-    const { page } = await openPage(path);
+  await withPage(`/${path}`, path, {}, async ({ page }) => {
     const audit = await page.evaluate(() => {
       const ids = [...document.querySelectorAll('section[data-beat]')].map((b) => b.dataset.beat);
       return {
@@ -220,14 +240,7 @@ for (const path of PAGES) {
       const status = (await fetch(href)).status;
       check(status === 200, `/${path} internal link ${href} returns ${status}`);
     }
-    await page.close();
-  }
+  });
 }
 
-await browser.close();
-if (failures.length) {
-  console.error(`FAIL (${failures.length})\n` + failures.map((f) => `  - ${f}`).join('\n'));
-  process.exit(1);
-}
-console.log(`PASS: story smoke test (${PAGES.length} pages)`);
-process.exit(0);
+await finish();
