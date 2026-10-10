@@ -16,7 +16,7 @@
 //     with nothing to check
 //
 // Run:  PLAYWRIGHT_DIR=<directory holding node_modules/playwright> node test/smoke.mjs
-//       BASE_URL=<url> ... runs against that server instead.
+//       SMOKE_BASE_URL=<url> ... runs against that server instead.
 // Without PLAYWRIGHT_DIR, playwright is resolved from this repository.
 
 import { createRequire } from 'node:module';
@@ -70,8 +70,10 @@ async function serveSite(root) {
   return `http://127.0.0.1:${server.address().port}`;
 }
 
-let BASE = process.env.BASE_URL;
-if (!BASE) BASE = await serveSite(join(here, '..', 'site'));
+// Prefixed, so a base URL a dev shell sets for some other tool cannot quietly
+// point the test at another server.
+const external = process.env.SMOKE_BASE_URL?.replace(/\/$/, '');
+const BASE = external || await serveSite(join(here, '..', 'site'));
 
 const failures = [];
 const check = (ok, message) => { if (!ok) failures.push(message); };
@@ -109,10 +111,10 @@ async function finish() {
   await browser.close();
   const unique = [...new Set(failures)];
   if (unique.length) {
-    console.error(`FAIL (${unique.length})\n` + unique.map((f) => `  - ${f}`).join('\n'));
+    console.error(`FAIL (${unique.length})${external ? ` against ${BASE}` : ''}\n` + unique.map((f) => `  - ${f}`).join('\n'));
     process.exit(1);
   }
-  console.log(`PASS: story smoke test (${PAGES.length} pages)`);
+  console.log(`PASS: story smoke test (${PAGES.length} pages${external ? ` at ${BASE}` : ''})`);
   process.exit(0);
 }
 
