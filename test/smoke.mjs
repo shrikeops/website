@@ -21,6 +21,7 @@
 
 import { createRequire } from 'node:module';
 import { spawn } from 'node:child_process';
+import { statfsSync } from 'node:fs';
 import { createServer } from 'node:net';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
@@ -57,7 +58,11 @@ if (!BASE) {
 
 const failures = [];
 const check = (ok, message) => { if (!ok) failures.push(message); };
-const browser = await chromium.launch();
+// Playwright moves Chromium's shared memory out of /dev/shm, which is tiny in
+// containers, and into /tmp. A /tmp at its quota kills the page outright, so
+// shared memory stays in /dev/shm wherever that has room.
+const shmFree = (() => { try { const s = statfsSync('/dev/shm'); return s.bavail * s.bsize; } catch { return 0; } })();
+const browser = await chromium.launch(shmFree > 512 * 2 ** 20 ? { ignoreDefaultArgs: ['--disable-dev-shm-usage'] } : {});
 
 async function openPage(path, options = {}) {
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, ...options });
