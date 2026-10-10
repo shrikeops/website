@@ -3,8 +3,10 @@
 // lighting keyframes, optional extra frame fields) and its tracks.
 //
 // render(t) is a pure function of the story position, so scrolling back up
-// plays the same frames in reverse. tick() only drives ambient motion that
-// carries no story state.
+// plays the same frames in reverse. tick(now) drives ambient motion, and may
+// draw things that render(t) has gated in. Called again and again at one fixed
+// now (so dt is 0), tick must draw a sensible still frame: under reduced
+// motion that frame is all the reader sees, and the smoke test checks it.
 
 import { el } from '../iso.js';
 import { PALETTES, WINDOW_LIGHT, materialCss, mixPalettes } from '../palette.js';
@@ -53,7 +55,7 @@ export function storyScene(stage, beatIds, name, setup) {
   }
 
   function tick(now) {
-    frame.dt = frame.now ? Math.min(64, now - frame.now) : 16;
+    frame.dt = frame.now ? Math.max(0, Math.min(64, now - frame.now)) : 16;
     frame.now = now;
     for (const track of tracks) track.tick?.(frame);
   }

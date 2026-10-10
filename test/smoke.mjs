@@ -7,7 +7,9 @@
 //   - two beats with the same id, which would make the scene's timing ambiguous
 //   - stateful rendering: every beat's frame reached on the way down must match
 //     the same frame reached on the way back up (scrolling up is the reverse)
-//   - the reduced-motion path not showing each beat's end state
+//   - the reduced-motion path not showing each beat's end state: with ambient
+//     motion held still at the page's fixed time, the frame shown must match
+//     the beat's end state ticked at that time
 //   - copy hidden without JavaScript
 //   - an evidence beat without a source, or an evidence card with no beat
 //   - a broken asset or internal link
@@ -19,6 +21,8 @@
 
 import { createRequire } from 'node:module';
 import { spawn } from 'node:child_process';
+import { statfsSync } from 'node:fs';
+import { createServer } from 'node:net';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
@@ -30,12 +34,20 @@ const { chromium } = require('playwright');
 const FROZEN_NOW = 123456;
 const PROBE = 0.6;
 const SETTLE_MS = 900;
+// Reduced motion jumps straight to the end of the beat with no smoothing, but
+// the wait must still outlast the longest opacity transition inside the
+// stage (0.3s on .readout and .greg-stage), which reduced motion leaves on.
+const STILL_SETTLE_MS = 500;
 
 const here = dirname(fileURLToPath(import.meta.url));
 let BASE = process.env.BASE_URL;
 let server = null;
 if (!BASE) {
-  const PORT = 8190;
+  // A free port rather than a fixed one: a server another run left on a fixed
+  // port would stand in for site/, and the test would check the wrong pages.
+  const PORT = await new Promise((resolve) => {
+    const probe = createServer().listen(0, '127.0.0.1', () => { const { port } = probe.address(); probe.close(() => resolve(port)); });
+  });
   BASE = `http://127.0.0.1:${PORT}`;
   server = spawn('python3', ['-m', 'http.server', String(PORT), '--bind', '127.0.0.1', '--directory', join(here, '..', 'site')], { stdio: 'ignore' });
   process.on('exit', () => server?.kill());
@@ -46,7 +58,11 @@ if (!BASE) {
 
 const failures = [];
 const check = (ok, message) => { if (!ok) failures.push(message); };
-const browser = await chromium.launch();
+// Playwright moves Chromium's shared memory out of /dev/shm, which is tiny in
+// containers, and into /tmp. A /tmp at its quota kills the page outright, so
+// shared memory stays in /dev/shm wherever that has room.
+const shmFree = (() => { try { const s = statfsSync('/dev/shm'); return s.bavail * s.bsize; } catch { return 0; } })();
+const browser = await chromium.launch(shmFree > 512 * 2 ** 20 ? { ignoreDefaultArgs: ['--disable-dev-shm-usage'] } : {});
 
 async function openPage(path, options = {}) {
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, ...options });
@@ -65,7 +81,7 @@ async function storyPages() {
   return [...new Set(paths)];
 }
 
-async function scrollToBeat(page, id, fraction) {
+async function scrollToBeat(page, id, fraction, wait = SETTLE_MS) {
   await page.evaluate(([id, fraction]) => {
     const story = document.querySelector('.story');
     const activation = parseFloat(getComputedStyle(story).getPropertyValue('--activation')) || 0.5;
@@ -75,16 +91,17 @@ async function scrollToBeat(page, id, fraction) {
     const span = (next ? next.getBoundingClientRect().top : beat.getBoundingClientRect().bottom) - top;
     scrollTo(0, scrollY + top + span * fraction - innerHeight * activation);
   }, [id, fraction]);
-  await page.waitForTimeout(SETTLE_MS);
+  await page.waitForTimeout(wait);
 }
 
-// The whole stage as one line per element, after ticking the scene at a
-// frozen time. An element that is not displayed or fully transparent is
-// recorded as hidden without its classes, attributes or children: leftovers nobody
-// can see are not differences. The --ambient-* properties carry motion that
+// The whole stage as one line per element, after ticking the scene at the
+// given time, or exactly as the engine left it when no time is given. An
+// element that is not displayed or fully transparent is recorded as hidden
+// without its classes, attributes or children: leftovers nobody can see are
+// not differences. The --ambient-* properties carry motion that
 // accumulates over time and are left out.
 function frame(now) {
-  document.querySelector('.story').scene.tick(now);
+  if (now !== undefined) document.querySelector('.story').scene.tick(now);
   const lines = [];
   const walk = (node, depth) => {
     for (const child of node.children) {
@@ -106,13 +123,17 @@ function frame(now) {
   return lines;
 }
 
-function firstDifferences(a, b, limit = 3) {
+function firstDifferences(a, b, labels = ['down', 'up'], limit = 3) {
+  const width = Math.max(...labels.map((l) => l.length)) + 1;
+  const [la, lb] = labels.map((l) => `${l}:`.padEnd(width));
   const out = [];
   for (let i = 0; i < Math.max(a.length, b.length) && out.length < limit; i++) {
-    if (a[i] !== b[i]) out.push(`      down: ${(a[i] ?? '(missing)').trim().slice(0, 160)}\n      up:   ${(b[i] ?? '(missing)').trim().slice(0, 160)}`);
+    if (a[i] !== b[i]) out.push(`      ${la} ${(a[i] ?? '(missing)').trim().slice(0, 160)}\n      ${lb} ${(b[i] ?? '(missing)').trim().slice(0, 160)}`);
   }
   return out.join('\n');
 }
+
+const sameFrame = (a, b) => a.length === b.length && a.every((line, k) => line === b[k]);
 
 async function checkReversible(path) {
   const { page, problems } = await openPage(path);
@@ -123,10 +144,34 @@ async function checkReversible(path) {
   const up = [];
   for (const id of [...beats].reverse()) { await scrollToBeat(page, id, PROBE); up.unshift(await page.evaluate(frame, FROZEN_NOW)); }
   beats.forEach((id, i) => {
-    const same = down[i].length === up[i].length && down[i].every((line, k) => line === up[i][k]);
-    check(same, `/${path} beat ${id}: the frame differs between scrolling down and scrolling back up\n${firstDifferences(down[i], up[i])}`);
+    check(sameFrame(down[i], up[i]), `/${path} beat ${id}: the frame differs between scrolling down and scrolling back up\n${firstDifferences(down[i], up[i])}`);
   });
   for (const p of problems) failures.push(`/${path}: ${p}`);
+  await page.close();
+}
+
+// Under reduced motion the frame shown just after a beat starts must be that
+// beat's end state, with ambient motion drawn still at the page's fixed time.
+async function checkStill(path) {
+  const { page, problems } = await openPage(path, { reducedMotion: 'reduce' });
+  const beats = await page.evaluate(() => [...document.querySelectorAll('section[data-beat]')].map((b) => b.dataset.beat));
+  for (const [i, id] of beats.entries()) {
+    await scrollToBeat(page, id, 0.05, STILL_SETTLE_MS);
+    const active = await page.evaluate(() => document.querySelector('.story').dataset.activeBeat);
+    if (active !== id) {
+      failures.push(`/${path} reduced motion, beat ${id}: scrolling there made beat ${active} active`);
+      continue;
+    }
+    const shown = await page.evaluate(frame);
+    await page.evaluate(([i, n]) => {
+      const story = document.querySelector('.story');
+      story.scene.render(Math.min(n - 0.0001, i + 0.9999));
+      story.scene.tick(story.stillNow);
+    }, [i, beats.length]);
+    const still = await page.evaluate(frame);
+    check(sameFrame(shown, still), `/${path} reduced motion, beat ${id}: the frame shown is not the beat's end state drawn still at stillNow\n${firstDifferences(shown, still, ['shown', 'still'])}`);
+  }
+  for (const p of problems) failures.push(`/${path} reduced motion: ${p}`);
   await page.close();
 }
 
@@ -150,7 +195,10 @@ for (const path of PAGES) {
 //    arrived from above or from below.
 for (const path of PAGES) await checkReversible(path);
 
-// 3. Reduced motion: arriving at the short-circuit beat shows its end state.
+// 3. Reduced motion: every beat shows its end state with ambient motion held
+//    still, and arriving at the short-circuit beat shows the struck
+//    substations.
+for (const path of PAGES) await checkStill(path);
 {
   const { page } = await openPage('', { reducedMotion: 'reduce' });
   await scrollToBeat(page, 'short-circuit', 0.05);
