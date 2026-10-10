@@ -21,6 +21,7 @@
 
 import { createRequire } from 'node:module';
 import { spawn } from 'node:child_process';
+import { createServer } from 'node:net';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
@@ -41,7 +42,11 @@ const here = dirname(fileURLToPath(import.meta.url));
 let BASE = process.env.BASE_URL;
 let server = null;
 if (!BASE) {
-  const PORT = 8190;
+  // A free port rather than a fixed one: a server another run left on a fixed
+  // port would stand in for site/, and the test would check the wrong pages.
+  const PORT = await new Promise((resolve) => {
+    const probe = createServer().listen(0, '127.0.0.1', () => { const { port } = probe.address(); probe.close(() => resolve(port)); });
+  });
   BASE = `http://127.0.0.1:${PORT}`;
   server = spawn('python3', ['-m', 'http.server', String(PORT), '--bind', '127.0.0.1', '--directory', join(here, '..', 'site')], { stdio: 'ignore' });
   process.on('exit', () => server?.kill());
