@@ -64,7 +64,9 @@ export function mountStory(storyEl, createScene) {
       if (Math.abs(target - shown) < SETTLE) shown = target;
     }
     if (shown !== rendered) scene.render((rendered = shown));
-    if (!reducedMotion.matches) scene.tick(time);
+    // Reduced motion draws ambient motion as one still pose: the same time on
+    // every call gives dt = 0.
+    scene.tick(reducedMotion.matches ? STILL_NOW : time);
     markActive(shown);
     if (onScreen && !reducedMotion.matches) requestFrame();
   }
