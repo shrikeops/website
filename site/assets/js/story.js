@@ -6,13 +6,19 @@
 
 const SETTLE = 0.0004;
 const SMOOTHING_MS = 90;
+// The fixed time at which ambient motion is drawn still under reduced motion.
+// Not zero: the scene reads a time of 0 as its first frame and would keep
+// stepping motion on by a default interval.
+const STILL_NOW = 4298;
 
 export function mountStory(storyEl, createScene) {
   const beats = [...storyEl.querySelectorAll('[data-beat]')];
   const stage = storyEl.querySelector('.stage');
   const scene = createScene(stage, beats.map((b) => b.dataset.beat));
-  // The smoke test ticks the scene at one fixed time before comparing frames.
+  // The smoke test ticks the scene at one fixed time before comparing frames,
+  // and at stillNow to reproduce the reduced-motion frame.
   storyEl.scene = scene;
+  storyEl.stillNow = STILL_NOW;
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 
   let target = 0, shown = null, rendered = null, activeIndex = -1;
