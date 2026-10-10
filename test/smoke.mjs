@@ -197,22 +197,23 @@ if (PAGES.length === 0) {
   await finish();
 }
 
+// Within a section the pages run side by side: almost all of a run is spent
+// waiting for scenes to settle, and story.js smooths by elapsed time, not by
+// frame count, so a busier browser settles in the same time.
+
 // 1. Scroll every page down and back up at three widths.
-for (const path of PAGES) {
-  for (const [width, height] of [[1440, 900], [1024, 768], [390, 844]]) {
-    await withPage(`/${path} at ${width}px`, path, { viewport: { width, height } }, async ({ page }) => {
-      const total = await page.evaluate(() => document.documentElement.scrollHeight);
-      for (let y = 0; y < total; y += 250) { await page.evaluate((v) => scrollTo(0, v), y); await page.waitForTimeout(30); }
-      for (let y = total; y > 0; y -= 500) { await page.evaluate((v) => scrollTo(0, v), y); await page.waitForTimeout(30); }
-      const overflow = await page.evaluate(() => document.documentElement.scrollWidth > innerWidth);
-      check(!overflow, `/${path} at ${width}px: page scrolls horizontally`);
-    });
-  }
-}
+await Promise.all(PAGES.flatMap((path) => [[1440, 900], [1024, 768], [390, 844]].map(([width, height]) =>
+  withPage(`/${path} at ${width}px`, path, { viewport: { width, height } }, async ({ page }) => {
+    const total = await page.evaluate(() => document.documentElement.scrollHeight);
+    for (let y = 0; y < total; y += 250) { await page.evaluate((v) => scrollTo(0, v), y); await page.waitForTimeout(30); }
+    for (let y = total; y > 0; y -= 500) { await page.evaluate((v) => scrollTo(0, v), y); await page.waitForTimeout(30); }
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth > innerWidth);
+    check(!overflow, `/${path} at ${width}px: page scrolls horizontally`);
+  }))));
 
 // 2. Reversibility: every beat renders the same frame whether the reader
 //    arrived from above or from below.
-for (const path of PAGES) await checkReversible(path);
+await Promise.all(PAGES.map(checkReversible));
 
 // 3. Reduced motion: arriving at the short-circuit beat shows its end state.
 await withPage('reduced motion', '', { reducedMotion: 'reduce' }, async ({ page }) => {
@@ -221,7 +222,7 @@ await withPage('reduced motion', '', { reducedMotion: 'reduce' }, async ({ page 
   check(glow > 0.2, 'reduced motion: the start of the short-circuit beat should already show the struck substations');
 });
 
-for (const path of PAGES) {
+await Promise.all(PAGES.map(async (path) => {
   // 4. Without JavaScript the stage is hidden and every beat's copy is visible.
   await withPage(`/${path} no-JS`, path, { javaScriptEnabled: false }, async ({ page }) => {
     const state = await page.evaluate(() => ({
@@ -253,6 +254,6 @@ for (const path of PAGES) {
       check(status === 200, `/${path} internal link ${href} returns ${status}`);
     }
   });
-}
+}));
 
 await finish();
