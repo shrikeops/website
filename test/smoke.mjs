@@ -12,6 +12,8 @@
 //   - an evidence beat without a source, or an evidence card with no beat
 //   - a broken asset or internal link
 //   - horizontal overflow at phone width
+//   - the nav linking no story pages, which would leave every per-page check
+//     with nothing to check
 //
 // Run:  PLAYWRIGHT_DIR=<directory holding node_modules/playwright> node test/smoke.mjs
 //       BASE_URL=<url> ... runs against that server instead.
@@ -170,7 +172,11 @@ function firstDifferences(a, b, limit = 3) {
 
 async function checkReversible(path) {
   await withPage(`/${path}`, path, {}, async ({ page }) => {
-    const beats = await page.evaluate(() => [...document.querySelectorAll('section[data-beat]')].map((b) => b.dataset.beat));
+    const beats = await page.evaluate(() => {
+      const story = document.querySelector('.story[data-scene]');
+      return story && [...story.querySelectorAll('section[data-beat]')].map((b) => b.dataset.beat);
+    });
+    if (!beats?.length) return check(false, `/${path}: no .story[data-scene] with beats — every page linked from .site-nav must be a story page`);
     const down = [];
     for (const id of beats) { await scrollToBeat(page, id, PROBE); down.push(await page.evaluate(frame, FROZEN_NOW)); }
     await scrollToBeat(page, beats[beats.length - 1], 0.95);
@@ -184,6 +190,10 @@ async function checkReversible(path) {
 }
 
 const PAGES = await storyPages();
+if (PAGES.length === 0) {
+  failures.push(`no pages linked from .site-nav at ${BASE}/ — is it serving this checkout's site/?`);
+  await finish();
+}
 
 // 1. Scroll every page down and back up at three widths.
 for (const path of PAGES) {
