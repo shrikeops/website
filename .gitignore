@@ -1,0 +1,2 @@
+# Playwright for test/smoke.mjs, when installed here rather than in PLAYWRIGHT_DIR
+node_modules/
